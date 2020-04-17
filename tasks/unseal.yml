@@ -1,0 +1,20 @@
+---
+
+- name: Reading unseal key contents
+  when: vault_init_status.stdout != 'Vault is initialized'
+  command: cat {{ item }}
+  register: unseal_keys
+  with_fileglob: "{{ vault_unseal_keys_dir }}/unseal_key_*"
+
+- name: Unseal vault with unseal keys
+  when: vault_init_status.stdout != 'Vault is initialized'
+  shell: |
+    vault operator unseal {{ item.stdout }}
+  environment:
+    VAULT_ADDR: "{{ vault_protocol }}://{{ vault_listener.tcp.address }}:{{  vault_listener.tcp.port }}"
+    VAULT_CLIENT_CERT: "{{ vault_tls_client_cert }}"
+    VAULT_CLIENT_KEY: "{{ vault_tls_client_cert_key }}"
+    VAULT_CACERT: "{{ vault_tls_ca_cert }}"
+  with_items: "{{ unseal_keys.results }}"
+  tags:
+    - skip_ansible_lint

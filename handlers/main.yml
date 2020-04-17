@@ -1,0 +1,13 @@
+---
+
+- name: vault_service
+  systemd:
+    name: vault
+    state: started
+    daemon_reload: yes
+    enabled: yes
+
+- name: vault_started
+  wait_for:
+    host: "{{ vault_listener.tcp.address }}"
+    port: "{{ vault_listener.tcp.port }}"

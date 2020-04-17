@@ -1,0 +1,34 @@
+---
+
+vault_url: https://releases.hashicorp.com/vault/1.4.0/vault_1.4.0_linux_amd64.zip
+vault_config_path: /etc/vault
+
+vault_key_shares: 5
+vault_key_threshold: 3
+vault_unseal_keys_dir: /etc/vault/keys
+
+#vault_tls_server_cert: /vagrant/certs/vault-server.akira.internal.pem
+#vault_tls_server_cert_key: /vagrant/certs/vault-server.akira.internal-key.pem
+#vault_tls_client_cert: /vagrant/certs/client.akira.internal.pem
+#vault_tls_client_cert_key: /vagrant/certs/client.akira.internal-key.pem
+#vault_tls_ca_cert: /vagrant/certs/akira-ca.pem
+
+vault_storage:
+  file:
+    path: /var/lib/vault
+
+vault_listener:
+  tcp:
+    address: 0.0.0.0
+    port: 8200
+    tls_disable: true
+    #tls_cert_file: "{{ vault_tls_server_cert }}"
+    #tls_key_file: "{{ vault_tls_server_cert_key }}"
+    #tls_client_ca_file: "{{ vault_tls_ca_cert }}"
+
+vault_protocol: '{{ vault_listener.tcp.tls_disable | ternary("http", "https") }}'
+vault_api_address: "{{ vault_protocol}}://{{ vault_listener.tcp.address }}:{{ vault_listener.tcp.port }}"
+vault_ui: true
+
+vault_user: vault
+vault_group: vault

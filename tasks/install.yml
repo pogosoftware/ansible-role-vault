@@ -1,0 +1,61 @@
+---
+
+- name: Ensure vault directories exists
+  file:
+    path: "{{ item }}"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0755
+    state: directory
+  with_items:
+    - "{{ vault_config_path }}"
+    - "{{ vault_storage.file.path }}"
+
+- name: Download vault binary
+  get_url:
+    url: "{{ vault_url }}"
+    dest: /tmp/vault_linux_amd64.zip
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0755
+  register: vault_download
+
+- name: Unzip vault archive
+  unarchive:
+    src: "{{ vault_download.dest }}"
+    dest: /usr/local/bin
+    copy: no
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0755
+
+- name: Set vault binary capabilities
+  capabilities:
+    path: /usr/local/bin/vault
+    capability: cap_ipc_lock+ep
+    state: present
+
+- name: Set vault net capabilities
+  capabilities:
+    path: /usr/local/bin/vault
+    capability: cap_net_bind_service+eip
+    state: present
+
+- name: Copy vault config file
+  template:
+    src: vault.hcl.j2
+    dest: "{{ vault_config_path }}/vault.hcl"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+
+- name: Copy vault service file
+  template:
+    src: vault.service.j2
+    dest: /etc/systemd/system/vault.service
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+  notify:
+    - vault_service
+    - vault_started
+
+- meta: flush_handlers

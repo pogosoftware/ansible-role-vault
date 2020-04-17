@@ -1,0 +1,18 @@
+{%- if vault_storage.file is defined -%}
+storage "file" {
+  path = "{{ vault_storage.file.path }}"
+}
+{% endif %}
+
+listener "tcp" {
+  address            = "{{ vault_listener.tcp.address }}:{{ vault_listener.tcp.port }}"
+  tls_disable        = {{ vault_listener.tcp.tls_disable | lower }}
+  {% if vault_listener.tcp.tls_disable == false -%}
+  tls_cert_file      = "{{ vault_listener.tcp.tls_cert_file }}"
+  tls_key_file       = "{{ vault_listener.tcp.tls_key_file }}"
+  tls_client_ca_file = "{{ vault_listener.tcp.tls_client_ca_file }}"
+  {% endif %}
+}
+
+api_addr = "{{ vault_api_address }}"
+ui       = {{ vault_ui | lower }}

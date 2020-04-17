@@ -1,0 +1,6 @@
+---
+
+- include: vault-user.yml
+- include: install.yml
+- include: init.yml
+- include: unseal.yml
