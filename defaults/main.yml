@@ -7,11 +7,11 @@ vault_key_shares: 5
 vault_key_threshold: 3
 vault_unseal_keys_dir: /etc/vault/keys
 
-#vault_tls_server_cert: /vagrant/certs/vault-server.akira.internal.pem
-#vault_tls_server_cert_key: /vagrant/certs/vault-server.akira.internal-key.pem
-#vault_tls_client_cert: /vagrant/certs/client.akira.internal.pem
-#vault_tls_client_cert_key: /vagrant/certs/client.akira.internal-key.pem
-#vault_tls_ca_cert: /vagrant/certs/akira-ca.pem
+#vault_tls_server_cert: /src/ssl/certs/vault/server.pem
+#vault_tls_server_cert_key: /src/ssl/private/vault/server.key
+#vault_tls_client_cert: /src/ssl/certs/vault/client.pem
+#vault_tls_client_cert_key: /src/ssl/private/vault/client.key
+#vault_tls_ca_cert: /src/ssl/ca/ca.pem
 
 vault_storage:
   file:
